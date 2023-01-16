@@ -1,5 +1,5 @@
 const CategoryModel = (sequelize, DataTypes) => {
-  const category = sequelize.define('User', {
+  const category = sequelize.define('category', {
     name: DataTypes.STRING,
   });
     

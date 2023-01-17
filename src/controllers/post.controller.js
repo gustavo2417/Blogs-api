@@ -1,4 +1,5 @@
 const postService = require('../services/post.service');
+// const { idUser } = require('../utils/authotizedId');
 
 const getAllPosts = async (_req, res) => {
   const { message } = await postService.getAll();
@@ -17,7 +18,43 @@ const getPostById = async (req, res) => {
   res.status(200).json(message);
 };
 
+const updatePost = async (req, res) => {
+  const postId = req.params.id;
+  const { title, content } = req.body;
+  const { id } = req.user;
+  
+  const { type, message } = await postService.updatePost(postId, { title, content }, id);
+
+  if (type === 'POST_NOT_EXISTS') {
+    return res.status(404).json({ message });
+  }
+
+  if (type === 'USER_UNAUTHORIZED') {
+    return res.status(401).json({ message });
+  }
+  
+  res.status(200).json(message);
+};
+
+const deletePost = async (req, res) => {
+  const postId = req.params.id;
+  const { id } = req.user;
+  const { type, message } = await postService.deletePost(postId, id);
+
+  if (type === 'POST_NOT_EXISTS') {
+    return res.status(404).json({ message });
+  }
+
+  if (type === 'USER_UNAUTHORIZED') {
+    return res.status(401).json({ message });
+  }
+
+  return res.status(204).json();
+};
+
 module.exports = {
   getAllPosts,
   getPostById,
+  updatePost,
+  deletePost,
 };

@@ -14,15 +14,18 @@ const validateToken = (token) => {
 
 const confirmToken = (req, res, next) => {
   const token = req.header('Authorization');
-  const decoded = validateToken(token);
-
+  
   if (!token) {
     return res.status(401).json({ message: 'Token not found' });
   }
 
+  const decoded = validateToken(token);
+
   if (!decoded) {
     return res.status(401).json({ message: 'Expired or invalid token' });
   }
+
+  req.user = decoded;
 
   return next();
 };

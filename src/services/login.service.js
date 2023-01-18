@@ -1,6 +1,5 @@
 const { User } = require('../models');
 const { newToken } = require('../auth/jwt.token');
-// const { idUser } = require('../utils/authotizedId');
 
 const login = async (email, password) => {
   if (!email || !password) {

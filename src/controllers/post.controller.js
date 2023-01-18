@@ -1,5 +1,4 @@
 const postService = require('../services/post.service');
-// const { idUser } = require('../utils/authotizedId');
 
 const getAllPosts = async (_req, res) => {
   const { message } = await postService.getAll();
@@ -52,9 +51,22 @@ const deletePost = async (req, res) => {
   return res.status(204).json();
 };
 
+const createPost = async (req, res) => {
+  const userId = req.user.id;
+  const { title, content, categoryIds } = req.body;
+  const { type, message } = await postService.createPost({ title, content, userId, categoryIds });
+
+  if (type) {
+    return res.status(400).json({ message });
+  }
+
+  return res.status(201).json(message);
+};
+
 module.exports = {
   getAllPosts,
   getPostById,
   updatePost,
   deletePost,
+  createPost,
 };

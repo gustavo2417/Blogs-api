@@ -1,4 +1,4 @@
-const { BlogPost, User, Category } = require('../models');
+const { BlogPost, User, Category, PostCategory } = require('../models');
 
 const getAll = async () => {
   const posts = await BlogPost.findAll({
@@ -64,9 +64,26 @@ const deletePost = async (id, userId) => {
   return { type: null };
 };
 
+const createPost = async ({ title, content, userId, categoryIds }) => {
+  const { count } = await Category.findAndCountAll({ where: { id: categoryIds } });
+
+  if (count !== categoryIds.length || categoryIds.length === 0) {
+    return { type: 'Category not found', message: 'one or more "categoryIds" not found' };
+  }
+
+  const { dataValues } = await BlogPost.create({ title, content, userId });
+
+  const Postcategories = categoryIds.map((ids) => ({ postId: dataValues.id, categoryId: ids }));
+
+  await PostCategory.bulkCreate(Postcategories);
+
+  return { type: null, message: dataValues }; 
+};
+
 module.exports = {
   getAll,
   getById,
   updatePost,
   deletePost,
+  createPost,
 };
